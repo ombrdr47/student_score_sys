@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communication Skills Scoring Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .input-section, .results-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .duration-input {
+            margin-top: 15px;
+        }
+
+        .duration-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .duration-input input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .score-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .score-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .score-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background: #5a6268;
+        }
+
+        .sample-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .sample-btn:hover {
+            background: #218838;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .overall-score {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .score-value {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .score-label {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .criterion-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .criterion-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .criterion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .criterion-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .criterion-score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .metric-detail {
+            background: #f8f9fa;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .metric-name {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .metric-feedback {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .semantic-similarity {
+            background: #e7f3ff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #004085;
+        }
+
+        .word-count-info {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .placeholder {
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📢 Communication Skills Scoring Tool</h1>
+            <p>AI-powered analysis of spoken communication transcripts</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Input Section -->
+            <div class="input-section">
+                <h2 class="section-title"> Enter Transcript</h2>
+                <textarea 
+                    id="transcript" 
+                    placeholder="Paste or type the transcript of the self-introduction here...&#10;&#10;Example:&#10;Hello everyone, myself John, studying in class 8th B section from Christ Public School. I am 13 years old..."></textarea>
+                
+                <div class="duration-input">
+                    <label for="duration"> Duration (seconds) - Optional:</label>
+                    <input type="number" id="duration" min="1" placeholder="e.g., 52 (leave empty for auto-calculation)">
+                </div>
+
+                <div class="button-container">
+                    <button class="score-btn" onclick="scoreTranscript()">
+                        Score Transcript
+                    </button>
+                    <button class="sample-btn" onclick="loadSample()">
+                        Load Sample
+                    </button>
+                    <button class="clear-btn" onclick="clearAll()">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <h2 class="section-title"> Results</h2>
+                <div id="results">
+                    <div style="text-align: center; padding: 60px 20px; color: #999;">
+                        <div style="font-size: 4em; margin-bottom: 20px;"></div>
+                        <p style="font-size: 1.2em;">Enter a transcript and click "Score Transcript" to see the analysis</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sampleTranscript = `Hello everyone, myself Muskan, studying in class 8th B section from Christ Public School. I am 13 years old. I live with my family. There are 3 people in my family, me, my mother and my father. One special thing about my family is that they are very kind hearted to everyone and soft spoken. One thing I really enjoy is play, playing cricket and taking wickets. A fun fact about me is that I see in mirror and talk by myself. One thing people don't know about me is that I once stole a toy from one of my cousin. My favorite subject is science because it is very interesting. Through science I can explore the whole world and make the discoveries and improve the lives of others. Thank you for listening.`;
+
+        function loadSample() {
+            document.getElementById('transcript').value = sampleTranscript;
+            document.getElementById('duration').value = '52';
+        }
+
+        function clearAll() {
+            document.getElementById('transcript').value = '';
+            document.getElementById('duration').value = '';
+            document.getElementById('results').innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: #999;">
+                    <div style="font-size: 4em; margin-bottom: 20px;"></div>
+                    <p style="font-size: 1.2em;">Enter a transcript and click "Score Transcript" to see the analysis</p>
+                </div>
+            `;
+        }
+
+        async function scoreTranscript() {
+            const transcript = document.getElementById('transcript').value.trim();
+            const durationInput = document.getElementById('duration').value;
+            
+            if (!transcript) {
+                alert('Please enter a transcript first!');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing transcript...</p>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
+                        Running NLP models, grammar checks, and sentiment analysis
+                    </p>
+                </div>
+            `;
+
+            try {
+                const payload = {
+                    transcript: transcript
+                };
+                
+                if (durationInput) {
+                    payload.duration_sec = parseFloat(durationInput);
+                }
+
+                const response = await fetch('/api/score', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to score transcript');
+                }
+
+                const result = await response.json();
+                displayResults(result);
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function displayResults(result) {
+            const resultsDiv = document.getElementById('results');
+            
+            let html = `
+                <div class="overall-score">
+                    <div class="score-label">Overall Score</div>
+                    <div class="score-value">${result.overall_score}/100</div>
+                    <div class="score-label">${getScoreGrade(result.overall_score)}</div>
+                </div>
+
+                <div class="word-count-info">
+                    <strong> Transcript Stats:</strong> 
+                    ${result.word_count} words | ${result.sentence_count} sentences
+                </div>
+            `;
+
+            result.criteria.forEach(criterion => {
+                const percentage = (criterion.score / criterion.max_score) * 100;
+                
+                html += `
+                    <div class="criterion-card">
+                        <div class="criterion-header">
+                            <div class="criterion-name">${criterion.name}</div>
+                            <div class="criterion-score">${criterion.score}/${criterion.max_score}</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percentage}%"></div>
+                        </div>
+                `;
+
+                if (criterion.details) {
+                    criterion.details.forEach(detail => {
+                        html += `
+                            <div class="metric-detail">
+                                <div class="metric-name">${detail.metric}</div>
+                                <div class="metric-feedback">${detail.feedback}</div>
+                        `;
+                        
+                        if (detail.score !== undefined) {
+                            html += `<div style="margin-top: 5px; color: #667eea; font-weight: 600;">
+                                Score: ${detail.score}/${detail.max_score}
+                            </div>`;
+                        }
+                        
+                        html += `</div>`;
+                    });
+                }
+
+                if (criterion.semantic_similarity && criterion.semantic_similarity !== 'N/A') {
+                    html += `
+                        <div class="semantic-similarity">
+                            🤖 <strong>Semantic Similarity:</strong> ${(criterion.semantic_similarity * 100).toFixed(1)}%
+                            <br><small>How well the content matches expected patterns using NLP</small>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+
+        function getScoreGrade(score) {
+            if (score >= 90) return ' Excellent';
+            if (score >= 80) return '👍 Very Good';
+            if (score >= 70) return ' Good';
+            if (score >= 60) return ' Satisfactory';
+            return '💪 Needs Improvement';
+        }
+    </script>
+</body>
+</html>
