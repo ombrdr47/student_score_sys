@@ -97,8 +97,8 @@ Assignment/
 
 ### Step 1: Clone the Repository
 ```bash
-git clone <your-repo-url>
-cd Assignment
+git clone https://github.com/ombrdr47/student_score_sys
+cd student_score_sys
 ```
 
 ### Step 2: Create Virtual Environment
@@ -146,8 +146,8 @@ POST /api/score
 Content-Type: application/json
 
 {
-  "transcript": "Hello everyone, myself John...",
-  "duration_sec": 52  // optional
+  "transcript": "Hello everyone, myself Om...",
+  "duration_sec": 52  
 }
 ```
 
@@ -189,104 +189,6 @@ To test:
 2. Click "Score Transcript"
 3. Verify scores match expected values
 
-##  Deployment
-
-### Local Deployment
-Follow installation steps above. The app runs on `http://localhost:5001`
-
-### Cloud Deployment Options
-
-#### 1. Heroku
-```bash
-# Create Procfile
-echo "web: python app.py" > Procfile
-
-# Deploy
-heroku create your-app-name
-git push heroku main
-```
-
-#### 2. AWS EC2 (Free Tier)
-```bash
-# SSH into EC2 instance
-ssh -i your-key.pem ec2-user@your-instance-ip
-
-# Install dependencies
-sudo yum update -y
-sudo yum install python3 python3-pip git -y
-
-# Clone and setup
-git clone <your-repo>
-cd Assignment
-pip3 install -r requirements.txt
-
-# Run with nohup
-nohup python3 app.py > app.log 2>&1 &
-```
-
-#### 3. Render / Railway
-- Connect GitHub repository
-- Set build command: `pip install -r requirements.txt`
-- Set start command: `python app.py`
-- Deploy automatically
-
-### Production Considerations
-- Use **gunicorn** for production: `gunicorn -w 4 -b 0.0.0.0:5001 app:app`
-- Set `debug=False` in app.py
-- Use environment variables for configuration
-- Consider caching NLP models
-
-##  Configuration
-
-### Environment Variables (Optional)
-```bash
-export FLASK_ENV=production
-export PORT=5001
-export MODEL_CACHE_DIR=/path/to/cache
-```
-
-### Customizing Rubric
-To modify scoring criteria, edit `app.py`:
-- Update keyword dictionaries in `TranscriptScorer.__init__()`
-- Adjust scoring thresholds in scoring functions
-- Modify weights in `score_transcript()` method
-
-##  Scoring Formula Details
-
-### Overall Score Calculation
-```
-Total Score = Content_Structure (40) + 
-              Speech_Rate (10) + 
-              Language_Grammar (20) + 
-              Clarity (15) + 
-              Engagement (15)
-            = 100 points
-```
-
-### Semantic Similarity
-```python
-similarity = cosine_similarity(
-    encode(transcript),
-    encode(criterion_description)
-)
-```
-
-Used to enhance rule-based scoring by understanding context beyond keywords.
-
-##  Troubleshooting
-
-### Issue: LanguageTool fails to load
-**Solution**: Ensure Java is installed (`java --version`). Install Java if missing.
-
-### Issue: Slow first run
-**Solution**: Models are downloading. Subsequent runs will be faster.
-
-### Issue: Out of memory
-**Solution**: Reduce model size or use CPU-only torch:
-```bash
-pip install torch --index-url https://download.pytorch.org/whl/cpu
-```
-
 ##  API Documentation
 
 ### Endpoints
@@ -323,30 +225,6 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
   ]
 }
 ```
-
-##  Demo Video
-
-A screen recording demonstration is available showing:
-1. Application startup
-2. Sample transcript loading
-3. Scoring process
-4. Results interpretation
-5. Code walkthrough
-
-##  License
-
-This project is created for educational purposes as part of a communication program case study.
-
-##  Author
-
-Created for the Communication Program AI Tool Case Study
-
-##  Acknowledgments
-
-- sentence-transformers by UKPLab
-- LanguageTool for grammar checking
-- VADER Sentiment Analysis
-- Flask framework
 
 ---
 
